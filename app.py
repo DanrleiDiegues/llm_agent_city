@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import google.generativeai as genai
 import chromadb
-from chromadb.api.types import EmbeddingFunction, Documents, Embeddings  # Correção aqui
+from chromadb import Documents, EmbeddingFunction, Embeddings
 from chromadb.config import Settings
 from google.api_core import retry
 import os
@@ -10,12 +10,6 @@ from dotenv import load_dotenv
 
 # Carregar variáveis de ambiente
 load_dotenv()
-
-# Verifica se a chave da API do Google está configurada
-if not os.getenv("GOOGLE_API_KEY"):
-    st.error("Chave da API do Google não encontrada. Por favor, configure a variável de ambiente GOOGLE_API_KEY.")
-    st.stop()
-
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Configurar a página
@@ -31,65 +25,39 @@ class GeminiEmbeddingFunction(EmbeddingFunction):
 
     def __call__(self, input: Documents) -> Embeddings:
         embedding_task = "retrieval_document" if self.document_mode else "retrieval_query"
-        retry_policy = retry.Retry(predicate=retry.if_transient_error)
+        retry_policy = {"retry": retry.Retry(predicate=retry.if_transient_error)}
         
-        # Garantir que input seja uma lista
-        if isinstance(input, str):
-            input = [input]
-        
-        try:
-            response = genai.embed_content(
-                model="models/text-embedding-004",
-                content=input,
-                task_type=embedding_task,
-                request_options={"retry": retry_policy},
-            )
-            # Verificar se temos uma lista de embeddings ou um único embedding
-            embeddings = response["embedding"]
-            if not isinstance(embeddings[0], list):
-                embeddings = [embeddings]
-            return embeddings
-        except Exception as e:
-            st.error(f"Erro ao gerar embedding: {str(e)}")
-            # Retornar embedding vazio em caso de erro
-            return [[0.0] * 768] * len(input)
+        response = genai.embed_content(
+            model="models/text-embedding-004",
+            content=input,
+            task_type=embedding_task,
+            request_options=retry_policy,
+        )
+        return response["embedding"]
 
 # Função para carregar dados
 @st.cache_resource
 def load_knowledge_base():
-    try:
-        data = pd.read_csv("data/chácara_knowledge.csv", 
-                          encoding='latin1',
-                          sep=',',
-                          quotechar='"',
-                          escapechar='\\',
-                          on_bad_lines='warn')
-        return data
-    except Exception as e:
-        st.error(f"Erro ao carregar base de conhecimento: {str(e)}")
-        # Retornar DataFrame vazio em caso de erro
-        return pd.DataFrame(columns=['ConteÃºdo'])
+    data = pd.read_csv("data/chácara_knowledge.csv", 
+                      encoding='latin1',
+                      sep=',',
+                      quotechar='"',
+                      escapechar='\\',
+                      on_bad_lines='warn')
+    return data
 
 # Função para inicializar ChromaDB
 @st.cache_resource
 def init_chromadb():
     embed_fn = GeminiEmbeddingFunction()
     
-    # Usar Cliente em memória
-    chroma_client = chromadb.Client(Settings(
-        is_persistent=False,  # Configurar para modo em memória
-        anonymized_telemetry=False
-    ))
+    # Usar o novo cliente persistente
+    chroma_client = chromadb.PersistentClient(path="./chroma_db")
     
-    try:
-        # Tentar obter coleção existente
-        db = chroma_client.get_collection(name="characa_db")
-    except:
-        # Criar nova coleção se não existir
-        db = chroma_client.create_collection(
-            name="characa_db",
-            embedding_function=embed_fn
-        )
+    db = chroma_client.get_or_create_collection(
+        name="characadb",
+        embedding_function=embed_fn
+    )
     
     # Carregar documentos se o DB estiver vazio
     if db.count() == 0:
