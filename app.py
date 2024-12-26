@@ -7,7 +7,6 @@ import pandas as pd
 import google.generativeai as genai
 import chromadb
 from chromadb import Documents, EmbeddingFunction, Embeddings
-from chromadb.config import Settings
 from google.api_core import retry
 import os
 from dotenv import load_dotenv
@@ -168,7 +167,7 @@ def main():
         st.markdown("""
         ### Exemplos de perguntas que você pode fazer:
         - 🏛️ "Qual é a história de Chácara?"
-        - 🚌 "Quais os horários de ônibus de Juiz de Fora para Chácara?"
+        - 🚌 "Quais os horários de ônibus de CH vs. JF durante a semana de manhã?"
         - 🌍 "Me fale sobre a geografia da cidade.."
         - 🎭 "Quais são as principais festas da cidade?"
         - 👥 "Quantos habitantes tem Chácara?"
