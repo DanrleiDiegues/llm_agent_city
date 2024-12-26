@@ -75,21 +75,30 @@ def load_knowledge_base():
 def init_chromadb():
     embed_fn = GeminiEmbeddingFunction()
     
-    # Usar cliente efêmero para evitar problemas de persistência no Streamlit Cloud
-    chroma_client = chromadb.EphemeralClient()
+    # Usar Cliente em memória
+    chroma_client = chromadb.Client(Settings(
+        is_persistent=False,  # Configurar para modo em memória
+        anonymized_telemetry=False
+    ))
     
-    db = chroma_client.get_or_create_collection(
-        name="characa_db",
-        embedding_function=embed_fn
-    )
+    try:
+        # Tentar obter coleção existente
+        db = chroma_client.get_collection(name="characa_db")
+    except:
+        # Criar nova coleção se não existir
+        db = chroma_client.create_collection(
+            name="characa_db",
+            embedding_function=embed_fn
+        )
     
-    # Carregar documentos sempre (já que estamos usando cliente efêmero)
-    data = load_knowledge_base()
-    documents = data['ConteÃºdo'].tolist()
-    db.add(
-        documents=documents,
-        ids=[str(i) for i in range(len(documents))]
-    )
+    # Carregar documentos se o DB estiver vazio
+    if db.count() == 0:
+        data = load_knowledge_base()
+        documents = data['ConteÃºdo'].tolist()
+        db.add(
+            documents=documents,
+            ids=[str(i) for i in range(len(documents))]
+        )
     
     return db, embed_fn
 
