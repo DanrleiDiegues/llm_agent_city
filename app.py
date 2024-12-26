@@ -3,6 +3,7 @@ import pandas as pd
 import google.generativeai as genai
 import chromadb
 from chromadb import Documents, EmbeddingFunction, Embeddings
+from chromadb.config import Settings
 from google.api_core import retry
 import os
 from dotenv import load_dotenv
@@ -51,9 +52,14 @@ def init_chromadb():
     embed_fn = GeminiEmbeddingFunction()
     
     # Modificar esta linha para usar o cliente em memória
-    chroma_client = chromadb.PersistentClient(path="./chroma_db")
+    #chroma_client = chromadb.PersistentClient(path="./chroma_db")
     # Ou use esta opção para um cliente totalmente em memória:
     # chroma_client = chromadb.EphemeralClient()
+    
+    chroma_client = chromadb.Client(Settings(
+        chroma_db_impl="duckdb+parquet",
+        persist_directory="./chroma_db"
+    ))
     
     db = chroma_client.get_or_create_collection(
         name="characadb",
