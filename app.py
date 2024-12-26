@@ -56,7 +56,10 @@ def init_chromadb():
     embed_fn = GeminiEmbeddingFunction()
     
     # Usar o novo cliente persistente
-    chroma_client = chromadb.PersistentClient(path="./chroma_db")
+    #chroma_client = chromadb.PersistentClient(path="./chroma_db")
+    
+    # Usar o cliente em memória
+    chroma_client = chromadb.Client()
     
     db = chroma_client.get_or_create_collection(
         name="characadb",
