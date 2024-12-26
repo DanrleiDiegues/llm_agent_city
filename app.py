@@ -8,14 +8,14 @@ from google.api_core import retry
 import os
 from dotenv import load_dotenv
 
+# Carregar variáveis de ambiente
+load_dotenv()
+
 # Verifica se a chave da API do Google está configurada
 if not os.getenv("GOOGLE_API_KEY"):
     st.error("Chave da API do Google não encontrada. Por favor, configure a variável de ambiente GOOGLE_API_KEY.")
     st.stop()
 
-
-# Carregar variáveis de ambiente
-load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Configurar a página
