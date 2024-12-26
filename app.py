@@ -105,6 +105,43 @@ def main():
     
     st.title("🏘️ Chatbot Chácara-MG")
     
+    # Adicionar exemplos de perguntas antes do chat input
+    st.markdown("""
+    ### Exemplos de perguntas que você pode fazer:
+    - 🏛️ "Qual é a história de Chácara?"
+    - 🚌 "Quais os horários de ônibus de CH vs. JF durante a semana de manhã?"
+    - 🌍 "Me fale sobre a geografia da cidade.."
+    - 🎭 "Quais são as principais festas da cidade?"
+    - 👥 "Quantos habitantes tem Chácara?"
+    - 🍽️ "Quais os restaurantes da cidade?"
+    """)
+    
+    # Seção expansível com exemplos
+    with st.expander("📝 Clique aqui para ver exemplos de perguntas"):
+        st.markdown("""
+        ### Temas que você pode explorar:
+        
+        **História e Cultura:**
+        - História da fundação da cidade
+        - Origem do nome
+        - Tradições locais
+        
+        **Geografia e Demografia:**
+        - Localização
+        - População
+        - Clima
+        
+        **Turismo:**
+        - Pontos turísticos
+        - Festas tradicionais
+        - Gastronomia local
+        
+        **Economia:**
+        - Principais atividades econômicas
+        - Produtos locais
+        - Comércio
+        """)
+    
     # Inicializar componentes
     db, embed_fn = init_chromadb()
     chat = init_model()
@@ -163,42 +200,7 @@ def main():
             st.session_state.messages = []
             st.rerun()
             
-        # Adicionar exemplos de perguntas antes do chat input
-        st.markdown("""
-        ### Exemplos de perguntas que você pode fazer:
-        - 🏛️ "Qual é a história de Chácara?"
-        - 🚌 "Quais os horários de ônibus de CH vs. JF durante a semana de manhã?"
-        - 🌍 "Me fale sobre a geografia da cidade.."
-        - 🎭 "Quais são as principais festas da cidade?"
-        - 👥 "Quantos habitantes tem Chácara?"
-        - 🍽️ "Quais os restaurantes da cidade?"
-        """)
         
-        # Seção expansível com exemplos
-        with st.expander("📝 Clique aqui para ver exemplos de perguntas"):
-            st.markdown("""
-            ### Temas que você pode explorar:
-            
-            **História e Cultura:**
-            - História da fundação da cidade
-            - Origem do nome
-            - Tradições locais
-            
-            **Geografia e Demografia:**
-            - Localização
-            - População
-            - Clima
-            
-            **Turismo:**
-            - Pontos turísticos
-            - Festas tradicionais
-            - Gastronomia local
-            
-            **Economia:**
-            - Principais atividades econômicas
-            - Produtos locais
-            - Comércio
-            """)
 
 if __name__ == "__main__":
     main()
