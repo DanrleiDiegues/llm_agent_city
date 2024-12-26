@@ -168,10 +168,11 @@ def main():
         st.markdown("""
         ### Exemplos de perguntas que você pode fazer:
         - 🏛️ "Qual é a história de Chácara?"
-        - 📍 "Onde fica Chácara?"
+        - 🚌 "Quais os horários de ônibus de Juiz de Fora para Chácara?"
+        - 🌍 "Me fale sobre a geografia da cidade.."
         - 🎭 "Quais são as principais festas da cidade?"
         - 👥 "Quantos habitantes tem Chácara?"
-        - 🏺 "Quais são os pontos turísticos?"
+        - 🍽️ "Quais os restaurantes da cidade?"
         """)
         
         # Seção expansível com exemplos
