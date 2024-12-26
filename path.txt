@@ -1,0 +1,9 @@
+seu_projeto/
+├── app.py
+├── requirements.txt
+├── .env
+├── data/
+│   └── chácara_knowledge.csv
+├── chroma_db/
+└── .streamlit/
+    └── config.toml
