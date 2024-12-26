@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import google.generativeai as genai
 import chromadb
-from chromadb import Documents, EmbeddingFunction, Embeddings
+from chromadb.utils import embedding_functions
 from chromadb.config import Settings
 from google.api_core import retry
 import os
@@ -62,8 +62,8 @@ def init_chromadb():
     ))
     
     db = chroma_client.get_or_create_collection(
-        name="characadb",
-        embedding_function=embed_fn
+        name="characa_db",
+        embedding_function=embedding_functions.DefaultEmbeddingFunction()
     )
     
     # Carregar documentos se o DB estiver vazio
